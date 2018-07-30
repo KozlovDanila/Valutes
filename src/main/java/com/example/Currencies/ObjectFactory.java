@@ -1,5 +1,5 @@
 
-package com.example.demo;
+package com.example.Currencies;
 
 import javax.xml.bind.annotation.XmlRegistry;
 

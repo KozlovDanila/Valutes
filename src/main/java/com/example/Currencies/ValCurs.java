@@ -1,5 +1,5 @@
 
-package com.example.demo;
+package com.example.Currencies;
 
 import java.util.ArrayList;
 import java.util.List;
