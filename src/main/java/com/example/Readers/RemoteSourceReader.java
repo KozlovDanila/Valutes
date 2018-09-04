@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 
+//Кэширование?
 public class RemoteSourceReader implements IReader {
 
 	@Override

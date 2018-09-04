@@ -1,9 +1,8 @@
 package com.example.demo;
 
 import com.example.Currencies.ICurrency;
-import com.example.Readers.RemoteSourceReader;
+import com.example.Readers.IReader;
 import com.example.Readers.RestTemplateReader;
-import com.example.Readers.XmlReader;
 import com.example.Writers.XmlWriter;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
@@ -22,10 +21,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.xml.sax.SAXException;
 
 @SpringUI
 public class MyUI extends UI {
+
+	@Autowired
+	@Qualifier("remoteResourceReader")
+	private IReader remoteResourceReader;
+
+	@Autowired
+	@Qualifier("xmlReader")
+	private IReader xmlReader;
 
 	@Override
 	protected void init(VaadinRequest request) {
@@ -38,13 +47,19 @@ public class MyUI extends UI {
 
 		Button getCurrByRemoteButton = new Button("Получить курс валют с сайта");
 		layoutWithFormItems.addComponent(getCurrByRemoteButton);
-		getCurrByRemoteButton.addClickListener(clickEvent -> createTable(currencies, layoutWithFormItems, new RemoteSourceReader().read()));
+		getCurrByRemoteButton.addClickListener(clickEvent -> {
+			try {
+				createTable(currencies, layoutWithFormItems, remoteResourceReader.read());
+			} catch (ParserConfigurationException | IOException | SAXException e) {
+				createSubMessage("Ошибка", "Ошибка " + e.getMessage());
+			}
+		});
 
 		Button getCurrByXmlButton = new Button("Получить курс валют из файла");
 		layoutWithFormItems.addComponent(getCurrByXmlButton);
 		getCurrByXmlButton.addClickListener(clickEvent -> {
 			try {
-				createTable(currencies, layoutWithFormItems, new XmlReader().read());
+				createTable(currencies, layoutWithFormItems, xmlReader.read());
 			} catch (ParserConfigurationException | IOException | SAXException e) {
 				createSubMessage("Ошибка", "Ошибка " + e.getMessage());
 			}
